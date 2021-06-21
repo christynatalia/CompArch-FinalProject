@@ -49,7 +49,8 @@ def clientThread(client):
 
 def broadcast(message):
     for client in listOfClients:
-        client.send(message)
+        messageHeader = f'{len(message):<{HEADER_LENGTH}}'.encode('ascii')
+        client.send(messageHeader + message)
     
     
 
@@ -60,7 +61,7 @@ while True:
     
     # Make sure to change checking on the client side
     # Same with this one
-    client.send('Connection successful\n Press Enter to join chat!'.encode('ascii'))
+    client.send('Connection successful\nPress Enter to join chat!'.encode('ascii'))
     username = client.recv(1024)
     usernames.append(username)
     listOfClients.append(client)
