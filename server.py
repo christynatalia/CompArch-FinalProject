@@ -5,7 +5,7 @@ import threading
 IP = '127.0.0.1'
 PORT = 3000
 
-HEADER_LEGNTH = 256
+HEADER_LENGTH = 10
 
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -20,10 +20,18 @@ usernames = []
 
 print(f'Waiting for connections on {IP}:{PORT}')
 
+
 def clientThread(client):
+    
+    
     while True:
         try:
-            message = client.recv(1024)
+            messageHeader = client.recv(HEADER_LENGTH)
+            if not len(messageHeader):
+                return False
+            
+            messageLength = int(messageHeader.decode('ascii').strip())
+            message = client.recv(messageLength)
             broadcast(message)
             
         except:
