@@ -32,7 +32,7 @@ def clientThread(client):
             client.close()
             
             username = usernames[index]
-            broadcast(f'{username} has left the chat room!'.encode('ascii'))
+            broadcast(f'{username} has left the chat room!\n'.encode('ascii'))
             usernames.remove(username)
             
             break
@@ -52,13 +52,13 @@ while True:
     
     # Make sure to change checking on the client side
     # Same with this one
-    client.send('connection successful'.encode('ascii'))
+    client.send('Connection successful\n Press Enter to join chat!'.encode('ascii'))
     username = client.recv(1024)
     usernames.append(username)
     listOfClients.append(client)
     
-    broadcast(f'{username} has enter the chat room!'.encode('ascii'))
-    client.send('You are connected to the server!'.encode('ascii'))
+    broadcast(f'{username} has enter the chat room!\n'.encode('ascii'))
+    client.send('You are connected to the server!\n'.encode('ascii'))
     print(username, "is", f'{str(address)}')
     
     threading._start_new_thread(clientThread, (client,))
