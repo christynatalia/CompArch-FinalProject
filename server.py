@@ -18,12 +18,10 @@ serverSocket.listen(5)
 listOfClients = []
 usernames = []
 
-print(f'Waiting for connections on {IP}:{PORT}')
+print(f'Server is running on {IP}:{PORT}')
 
 
 def clientThread(client):
-    
-    
     while True:
         try:
             messageHeader = client.recv(HEADER_LENGTH)
@@ -40,7 +38,7 @@ def clientThread(client):
             client.close()
             
             username = usernames[index]
-            broadcast(f'{username} has left the chat room!\n'.encode('ascii'))
+            broadcast(f'{username} has left the chat room!'.encode('ascii'))
             usernames.remove(username)
             
             break
@@ -55,19 +53,26 @@ def broadcast(message):
     
 
 while True:
-    client, address = serverSocket.accept()
+    print("Waiting for connection ...")
     
-    print(f'{str(address)} has enter the chat room!')
+    client, address = serverSocket.accept()
+    print(f'{str(address)} create new connection!')
     
     # Make sure to change checking on the client side
     # Same with this one
-    client.send('Connection successful\nPress Enter to join chat!'.encode('ascii'))
+    message = 'username?'.encode('ascii')
+    messageHeader = f'{len(message):<{HEADER_LENGTH}}'.encode('ascii')
+    client.send(messageHeader + message)
+    
     username = client.recv(1024)
     usernames.append(username)
     listOfClients.append(client)
     
-    broadcast(f'{username} has enter the chat room!\n'.encode('ascii'))
-    client.send('You are connected to the server!\n'.encode('ascii'))
+    broadcast(f'{username} has enter the chat room!'.encode('ascii'))
+    
+    message = 'You are connected to the server!'.encode('ascii')
+    messageHeader = f'{len(message):<{HEADER_LENGTH}}'.encode('ascii')
+    client.send(messageHeader + message)
     print(username, "is", f'{str(address)}')
     
     threading._start_new_thread(clientThread, (client,))

@@ -22,7 +22,7 @@ def usernameClient():
                 
             except:
                 message=client.recv(1024).decode('ascii')
-            if message == 'connection successful':
+            if message == 'username?':
                 client.send(username.encode('ascii'))
             else:
                 print(message)
