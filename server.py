@@ -59,5 +59,6 @@ while True:
     
     broadcast(f'{username} has enter the chat room!'.encode('ascii'))
     client.send('You are connected to the server!'.encode('ascii'))
+    print(username, "is", f'{str(address)}')
     
     threading._start_new_thread(clientThread, (client,))
