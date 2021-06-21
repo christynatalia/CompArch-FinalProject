@@ -4,20 +4,30 @@ import threading
 IP = '127.0.0.1'
 PORT = 3000
 
+username = input("write down your username!")
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((IP,PORT))
 
-def client_things():
+def usernameClient():
     while True:
         message = client.recv(1024).decode("ascii")
+        #client.send(username.encode('ascii'))
         print(message)
-        if message == "connection successful":
-            username = input("write down your username!")
-            client.send(username.encode('ascii')) 
-        if message == "connected":
-            message = f'{username}: {input("")}'
-            client.send(message.encode('ascii'))
+
+def sendClient():
+    while True:
+        message = f'{username}: {input("")}'
+        client.send(message.encode('ascii'))
 
 
-thread_client = threading.Thread(target=client_things)
-thread_client.start()
+
+thread_user_client = threading.Thread(target=usernameClient)
+thread_user_client.start()
+
+thread_send_client = threading.Thread(target=sendClient)
+thread_send_client.start()
+
+
+
+
+
