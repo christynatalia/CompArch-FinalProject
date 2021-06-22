@@ -19,7 +19,7 @@ guiDone = False
 running = True
 
 def usernameClient():
-    while True:
+    while running:
         try:
             try:
                 messageHeader = client.recv(HEADER_LENGTH)
@@ -34,15 +34,23 @@ def usernameClient():
             if message == 'username?':
                 client.send(username.encode('ascii'))
             else:
+                if guiDone:
+                    textBox.config(state='normal')
+                    textBox.insert('end', message)
+                    textBox.yview('end')
+                    textBox.config(state='disabled')
                 print(message)
-        
+        except ConnectionAbortedError:
+            break
         except:
+            print("Error!")
             client.close()
             break
 
 def sendClient():
     while True:
-        msgUser = input()
+        #msgUser = input()
+        msgUser = inputArea.get('1.0', 'end')
         message = f'{username}: {msgUser}'
         message = message.encode('ascii')
         messageHeader = f'{len(message):<{10}}'.encode('ascii')
@@ -52,7 +60,8 @@ def sendClient():
             client.close()
             break   
         else:
-            client.send(messageHeader + message)   
+            client.send(messageHeader + message)
+            inputArea.delete('1.0', 'end')
         
 def guiLoop():
     window = tkinter.Tk()
@@ -71,21 +80,20 @@ def guiLoop():
     inputArea = tkinter.Text(window, height=3)
     inputArea.pack(padx=20, pady=5)
 
-    sendButton = tkinter.Button(window, text="Send", command=write)
+    sendButton = tkinter.Button(window, text="Send", command=sendClient)
     sendButton.pack(padx=20, pady=5)
 
     guiDone = True
     window.protocol("WM_DELETE_WINDOW", stop)
     window.mainloop()
 
-def write():
-    pass
-    
 def stop():
-    pass
+    running = False
+    window.destroy()
+    client.close()
+    exit(0)
 
-def receive():
-    pass
+
 
 
 thread_user_client = threading.Thread(target=usernameClient)
@@ -97,8 +105,6 @@ thread_send_client.start()
 thread_gui = threading.Thread(target=guiLoop)
 thread_gui.start()
 
-thread_receive = threading.Thread(target=receive)
-thread_receive.start()
 
 
 
