@@ -1,5 +1,8 @@
 import socket 
 import threading
+import tkinter
+import tkinter.scrolledtext
+from tkinter import simpledialog
 
 IP = '127.0.0.1'
 PORT = 3000
@@ -8,6 +11,8 @@ HEADER_LENGTH = 10
 username = input("Enter your username: ")
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((IP,PORT))
+
+
 
 def usernameClient():
     while True:
