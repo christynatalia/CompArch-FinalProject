@@ -33,11 +33,19 @@ def usernameClient():
 
 def sendClient():
     while True:
-        message = f'{username}: {input("")}'
+        data = input()
+        message = f'{username}: {data}'
         message = message.encode('ascii')
         messageHeader = f'{len(message):<{10}}'.encode('ascii')
-        #client.send(message.encode('ascii'))
-        client.send(messageHeader + message)
+        messageUser = message.split()
+        if data == '/close':
+            client.send(data.encode('ascii'))
+            client.close()
+            break
+            
+        else:
+            client.send(messageHeader + message)   
+        
 
 
 

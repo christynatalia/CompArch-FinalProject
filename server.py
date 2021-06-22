@@ -31,6 +31,8 @@ def clientThread(client):
             messageLength = int(messageHeader.decode('ascii').strip())
             message = client.recv(messageLength)
             broadcast(message)
+           
+            
             
         except:
             index = listOfClients.index(client)
