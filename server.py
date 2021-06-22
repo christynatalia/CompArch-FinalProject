@@ -72,7 +72,7 @@ while True:
     
     broadcast(f'{username} has enter the chat room!'.encode('ascii'))
     
-    message = 'You are connected to the server!'.encode('ascii')
+    message = 'You are connected to the server! Type /close to end this chat!'.encode('ascii')
     messageHeader = f'{len(message):<{HEADER_LENGTH}}'.encode('ascii')
     client.send(messageHeader + message)
     print(username, "is", f'{str(address)}')
