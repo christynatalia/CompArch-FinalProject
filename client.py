@@ -8,11 +8,15 @@ IP = '127.0.0.1'
 PORT = 3000
 HEADER_LENGTH = 10
 
-username = input("Enter your username: ")
+message = tkinter.Tk()
+message.withdraw()
+username = simpledialog.askstring("Username", "Enter your username", parent = message)
+#username = input("Enter your username: ")
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((IP,PORT))
 
-
+guiDone = False
+running = True
 
 def usernameClient():
     while True:
@@ -50,7 +54,38 @@ def sendClient():
         else:
             client.send(messageHeader + message)   
         
+def guiLoop():
+    window = tkinter.Tk()
+    window.configure(bg="white")
 
+    chatLabel = tkinter.Label(window, text="Chat:", bg="white")
+    chatLabel.pack(padx=20, pady=5)
+
+    textBox = tkinter.scrolledtext.ScrolledText(window)
+    textBox.pack(padx=20, pady=5)
+    textBox.config(state='disabled')
+
+    messageLabel = tkinter.Label(window, text="Message:", bg="white")
+    messageLabel.pack(padx=20, pady=5)
+
+    inputArea = tkinter.Text(window, height=3)
+    inputArea.pack(padx=20, pady=5)
+
+    sendButton = tkinter.Button(window, text="Send", command=write)
+    sendButton.pack(padx=20, pady=5)
+
+    guiDone = True
+    window.protocol("WM_DELETE_WINDOW", stop)
+    window.mainloop()
+
+def write():
+    pass
+    
+def stop():
+    pass
+
+def receive():
+    pass
 
 
 thread_user_client = threading.Thread(target=usernameClient)
@@ -59,7 +94,11 @@ thread_user_client.start()
 thread_send_client = threading.Thread(target=sendClient)
 thread_send_client.start()
 
+thread_gui = threading.Thread(target=guiLoop)
+thread_gui.start()
 
+thread_receive = threading.Thread(target=receive)
+thread_receive.start()
 
 
 
