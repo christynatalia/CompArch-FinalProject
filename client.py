@@ -35,10 +35,10 @@ def usernameClient():
                 client.send(username.encode('ascii'))
             else:
                 if guiDone:
-                    textBox.config(state='normal')
-                    textBox.insert('end', message)
-                    textBox.yview('end')
-                    textBox.config(state='disabled')
+                    guiLoop.textBox.config(state='normal')
+                    guiLoop.textBox.insert('end', message)
+                    guiLoop.textBox.yview('end')
+                    guiLoop.textBox.config(state='disabled')
                 print(message)
         except ConnectionAbortedError:
             break
@@ -50,7 +50,7 @@ def usernameClient():
 def sendClient():
     while True:
         #msgUser = input()
-        msgUser = inputArea.get('1.0', 'end')
+        msgUser = guiLoop.inputArea.get('1.0', 'end')
         message = f'{username}: {msgUser}'
         message = message.encode('ascii')
         messageHeader = f'{len(message):<{10}}'.encode('ascii')
@@ -61,7 +61,7 @@ def sendClient():
             break   
         else:
             client.send(messageHeader + message)
-            inputArea.delete('1.0', 'end')
+            guiLoop.inputArea.delete('1.0', 'end')
         
 def guiLoop():
     window = tkinter.Tk()
@@ -89,7 +89,7 @@ def guiLoop():
 
 def stop():
     running = False
-    window.destroy()
+    guiLoop.window.destroy()
     client.close()
     exit(0)
 
