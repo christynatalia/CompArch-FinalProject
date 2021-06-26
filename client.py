@@ -1,4 +1,4 @@
-import socket 
+import socket
 import threading
 import tkinter
 import tkinter.scrolledtext
@@ -6,105 +6,115 @@ from tkinter import simpledialog
 
 IP = '127.0.0.1'
 PORT = 3000
-HEADER_LENGTH = 10
 
-message = tkinter.Tk()
-message.withdraw()
-username = simpledialog.askstring("Username", "Enter your username", parent = message)
-#username = input("Enter your username: ")
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((IP,PORT))
-
-guiDone = False
-running = True
-
-def usernameClient():
-    while running:
-        try:
-            try:
-                messageHeader = client.recv(HEADER_LENGTH)
-                if not len(messageHeader):
-                    return False
-                
-                messageLength = int(messageHeader.decode('ascii').strip())
-                message = client.recv(messageLength).decode('ascii')
-                
-            except:
-                message=client.recv(1024).decode('ascii')
-            if message == 'username?':
-                client.send(username.encode('ascii'))
-            else:
-                if guiDone:
-                    guiLoop.textBox.config(state='normal')
-                    guiLoop.textBox.insert('end', message)
-                    guiLoop.textBox.yview('end')
-                    guiLoop.textBox.config(state='disabled')
-                print(message)
-        except ConnectionAbortedError:
-            break
-        except:
-            print("Error!")
-            client.close()
-            break
-
-def sendClient():
-    while True:
-        #msgUser = input()
-        msgUser = guiLoop.inputArea.get('1.0', 'end')
-        message = f'{username}: {msgUser}'
-        message = message.encode('ascii')
-        messageHeader = f'{len(message):<{10}}'.encode('ascii')
-        #messageUser = message.split()
-        if msgUser == '/close':
-            client.send(msgUser.encode('ascii'))
-            client.close()
-            break   
-        else:
-            client.send(messageHeader + message)
-            guiLoop.inputArea.delete('1.0', 'end')
+class Client:
+    
+    def __init__(self, ip, port):
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client.connect((ip,port))
         
-def guiLoop():
-    window = tkinter.Tk()
-    window.configure(bg="white")
+        msg = tkinter.Tk()
+        msg.withdraw()
+        
+        self.username = simpledialog.askstring("Username", "Enter your username", parent = msg)
+        
+        self.guiDone = False
+        
+        self.running = True
+        
+        guiThread = threading.Thread(target= self.guiLoop)
+        receiveThread = threading.Thread(target = self.receiveClient)
+        
+        guiThread.start()
+        receiveThread.start()
+        
+        
+    def guiLoop(self):
+        self.window = tkinter.Tk()
+        self.window.configure(bg="black")
+        
+        self.chatLabel = tkinter.Label(self.window, text = "Chat", bg="black", fg="white")
+        self.chatLabel.config(font=("Dubai Medium", 16))
+        self.chatLabel.pack(padx=20, pady=5)
+        
+        self.textArea = tkinter.scrolledtext.ScrolledText(self.window)
+        self.textArea.pack(padx = 20, pady=5)
+        self.textArea.config(state='disabled')
+        
+        self.msgLabel = tkinter.Label(self.window, text = "Message", bg="black", fg="white")
+        self.msgLabel.config(font=("Dubai Medium", 16))
+        self.msgLabel.pack(padx=20, pady=5)
+        
+        self.inputArea = tkinter.Text(self.window, height=3)
+        self.inputArea.pack(padx=20, pady=5)
+        
+        self.sendButton = tkinter.Button(self.window, text='Send', command=self.sendClient)
+        self.sendButton.config(font=("Dubai Medium", 14))
+        self.sendButton.pack(padx=20, pady=5)
+        
+        
+        self.guiDone = True
+        
+        self.window.protocol("WM_DELETE_WINDOW", self.stop)
+        self.window.mainloop()
 
-    chatLabel = tkinter.Label(window, text="Chat:", bg="white")
-    chatLabel.pack(padx=20, pady=5)
 
-    textBox = tkinter.scrolledtext.ScrolledText(window)
-    textBox.pack(padx=20, pady=5)
-    textBox.config(state='disabled')
+    def sendClient(self):
+        msgUser = self.inputArea.get('1.0', 'end')
+        
+        message = f"{self.username}:{msgUser}"
+        message = message.encode('ascii')
+        
+        messageHeader = f'{len(message):<{10}}'.encode('ascii')
+        
+        if msgUser == '/close':
+            self.client.send(self.inputArea.get('1.0', 'end').encode('ascii'))
+            self.stop()
 
-    messageLabel = tkinter.Label(window, text="Message:", bg="white")
-    messageLabel.pack(padx=20, pady=5)
+        else:
+            self.client.send(messageHeader + message)
+        
+        self.inputArea.delete('1.0', 'end')
+        
+        
+    def stop(self):
+        self.running = False
+        self.window.destroy()
+        self.client.close()
+        exit(0)
+      
+        
+    def receiveClient(self):
+        while self.running:
+            try:
+                try:
+                    messageHeader = self.client.recv(10)
+                    if not len(messageHeader):
+                        return False
+                    
+                    messageLength = int(messageHeader.decode('ascii').strip())
+                    message = self.client.recv(messageLength).decode('ascii')
+                    
+                    
+                except:
+                    message = self.client.recv(1024).decode('ascii')
+                    
+                
+                if message == 'username?':
+                    self.client.send(self.username.encode('ascii'))
+                
+                else:
+                    if self.guiDone:
+                        self.textArea.config(state="normal")
+                        self.textArea.insert('end', message)
+                        self.textArea.yview('end')
+                        self.textArea.config(state='disabled')
 
-    inputArea = tkinter.Text(window, height=3)
-    inputArea.pack(padx=20, pady=5)
-
-    sendButton = tkinter.Button(window, text="Send", command=sendClient)
-    sendButton.pack(padx=20, pady=5)
-
-    guiDone = True
-    window.protocol("WM_DELETE_WINDOW", stop)
-    window.mainloop()
-
-def stop():
-    running = False
-    guiLoop.window.destroy()
-    client.close()
-    exit(0)
-
-
-
-
-thread_user_client = threading.Thread(target=usernameClient)
-thread_user_client.start()
-
-thread_send_client = threading.Thread(target=sendClient)
-thread_send_client.start()
-
-thread_gui = threading.Thread(target=guiLoop)
-thread_gui.start()
-
-
-
-
+            
+            except:
+                self.client.close()
+                break
+                
+    
+    
+client = Client(IP, PORT)
