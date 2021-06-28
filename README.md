@@ -1,7 +1,7 @@
 # Chat Application Using Socket Programming 
 
 ### Short Description: 
-This project is an application that allows users to chat and interact with each other by using our server. When the server is turned on, clients are able to send message to all of the online users. While making this project, we use Python as the programming language and tkinter for the interface.
+This project is an application that allows users to chat and interact with each other by using our server. When the server is turned on, clients are able to send message to all of the online users. Currently, this program is working locally. While making this project, we use Python as the programming language and tkinter for the interface.
 
 ### Installation guide: 
 1. To install this project, please clone this repository to your local machine.
@@ -24,7 +24,7 @@ python server.py
 python client.py
 ```
 
-5. Type the different usernames on the client side and it is working!
+5. Type different usernames on the client side and it is working!
 
 
 ### Group Members:
