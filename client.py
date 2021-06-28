@@ -67,9 +67,10 @@ class Client:
         
         messageHeader = f'{len(message):<{10}}'.encode('ascii')
         
-        if msgUser == '/close':
+        if '/close' in msgUser:
             self.client.send(self.inputArea.get('1.0', 'end').encode('ascii'))
-            self.stop()
+            self.window.destroy()
+            self.window.mainloop()
 
         else:
             self.client.send(messageHeader + message)

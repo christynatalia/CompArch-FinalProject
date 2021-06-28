@@ -71,10 +71,7 @@ while True:
     listOfClients.append(client)
     
     broadcast(f'{username} has enter the chat room!\n'.encode('ascii'))
-    
-    message = 'You are connected to the server!\nType /close to end this chat!'.encode('ascii')
-    messageHeader = f'{len(message):<{HEADER_LENGTH}}'.encode('ascii')
-    client.send(messageHeader + message)
+
     print(username, "is", f'{str(address)}')
     
     threading._start_new_thread(clientThread, (client,))
