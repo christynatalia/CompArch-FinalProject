@@ -31,3 +31,7 @@ python client.py
 - Alvian Wijaya -> create the server and add the headers
 - Christy Natalia Jusman -> create the client side
 - Davin Pratama Chandra -> make the GUI 
+
+### References:
+https://m.youtube.com/watch?v=sopNW98CRag
+https://m.youtube.com/watch?v=CV7_stUWvBQ
