@@ -28,9 +28,9 @@ python client.py
 
 
 ### Group Members:
-- Alvian Wijaya -> create the server and add the headers
-- Christy Natalia Jusman -> create the client side
-- Davin Pratama Chandra -> make the GUI 
+- Alvian Wijaya (2301891595) -> create the server and add the headers
+- Christy Natalia Jusman (2301890365) -> create the client side
+- Davin Pratama Chandra (2301891090) -> make the GUI 
 
 ### References:
 https://m.youtube.com/watch?v=sopNW98CRag
