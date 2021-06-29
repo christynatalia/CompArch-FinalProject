@@ -23,6 +23,7 @@ python client.py
 ```
 
 5. Type different usernames on the client side and it is working!
+6. You can type `/close` to close the program.
 
 
 ## Group Members:
